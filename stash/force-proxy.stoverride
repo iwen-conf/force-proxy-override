@@ -1,15 +1,16 @@
-name: 强制走代理
+name: Grok Bot 强制走代理
 desc: |-
-  指定域名强制走真实出口，不开全局。
-  默认覆盖 GitHub / OpenAI。按需改 rules 里的域名。
-  策略组「强制代理」用 include-all 拉全部节点；第一项会成为默认出口。
-  若客户端不支持 include-all，把 proxies 改成你订阅里的组名。
+  让 Grok Bot.app 以及 grok.com / x.ai 一定走真实出口，不开全局。
+  Stash 里请用 jsDelivr 文件地址导入，不要填 link.stash.ws。
+  策略组「Grok Bot」用 include-all 拉全部节点；第一项会成为默认出口。
 author: iwen-conf
 homepage: https://github.com/iwen-conf/force-proxy-override
 category: 分流
 
+find-process-mode: strict
+
 proxy-groups:
-  - name: 强制代理
+  - name: Grok Bot
     type: select
     include-all: true
     exclude-filter: "(?i)直连|漏网|兜底|拦截|广告|DIRECT|REJECT|Traffic|Expire|流量|到期"
@@ -24,8 +25,15 @@ sniffer:
       ports: [80, "8080-8880"]
 
 rules:
-  - DOMAIN-SUFFIX,github.com,强制代理
-  - DOMAIN-SUFFIX,githubusercontent.com,强制代理
-  - DOMAIN-SUFFIX,githubassets.com,强制代理
-  - DOMAIN-SUFFIX,openai.com,强制代理
-  - DOMAIN-SUFFIX,chatgpt.com,强制代理
+  - AND,((DOMAIN-SUFFIX,grok.com),(NETWORK,udp),(DST-PORT,443)),REJECT
+  - AND,((DOMAIN-SUFFIX,x.ai),(NETWORK,udp),(DST-PORT,443)),REJECT
+  - PROCESS-NAME,Grok Bot,Grok Bot
+  - PROCESS-NAME,Grok Bot Helper,Grok Bot
+  - PROCESS-NAME,Grok Bot Helper (GPU),Grok Bot
+  - PROCESS-NAME,Grok Bot Helper (Renderer),Grok Bot
+  - PROCESS-NAME,Grok Bot Helper (Plugin),Grok Bot
+  - DOMAIN-SUFFIX,grok.com,Grok Bot
+  - DOMAIN-SUFFIX,grokusercontent.com,Grok Bot
+  - DOMAIN-SUFFIX,grokipedia.com,Grok Bot
+  - DOMAIN-SUFFIX,x.ai,Grok Bot
+  - DOMAIN-SUFFIX,spacex.ai,Grok Bot

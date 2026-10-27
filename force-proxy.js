@@ -9,29 +9,30 @@
 
 // ========== 只改这里 ==========
 var CONFIG = {
-  // 域名后缀（github.com 会匹配 gist.github.com、api.github.com）
+  // Grok Bot / xAI。后缀匹配含子域，例如 grok.com → auth.grok.com、connectors-gateway.grok.com
   domainSuffix: [
-    "github.com",
-    "githubusercontent.com",
-    "githubassets.com",
-    "openai.com",
-    "chatgpt.com",
+    "grok.com",
+    "grokusercontent.com",
+    "grokipedia.com",
+    "x.ai",
+    "spacex.ai",
   ],
-  // 域名关键字
   domainKeyword: [],
-  // 精确域名
   domain: [],
-  // 进程名 / 包名（macOS 一般不带 .app，Windows 带 .exe，Android 用包名）
-  processName: [],
-  // 写死出口组名。留空则按订阅自动挑
+  // macOS 进程名（Grok Bot.app 的可执行文件是 "Grok Bot"，Helper 也要算进去）
+  processName: [
+    "Grok Bot",
+    "Grok Bot Helper",
+    "Grok Bot Helper (GPU)",
+    "Grok Bot Helper (Renderer)",
+    "Grok Bot Helper (Plugin)",
+  ],
+  // Mihomo / Clash Meta 正则，一条盖住所有 Grok Bot 进程
+  processNameRegex: ["(?i)Grok Bot"],
   outbound: "",
-  // 脚本创建的策略组，规则都指向它，方便在日志里核对
-  groupName: "强制代理",
-  // 目标域名的 UDP/443（QUIC）改走 TCP
-  rejectQuic: false,
-  // 应用直连 IP 时从 TLS/HTTP 握手里还原域名
+  groupName: "Grok Bot",
+  rejectQuic: true,
   enableSniffer: true,
-  // 策略组末尾是否放 DIRECT，方便临时关掉强制
   allowDirectFallback: false,
 };
 // ========== 改到这里 ==========
@@ -49,7 +50,8 @@ function hasTargets(opt) {
     opt.domainSuffix.length +
       opt.domainKeyword.length +
       opt.domain.length +
-      opt.processName.length >
+      opt.processName.length +
+      opt.processNameRegex.length >
     0
   );
 }
@@ -61,8 +63,9 @@ function mergeOpt(opt) {
     domainKeyword: opt.domainKeyword || [],
     domain: opt.domain || [],
     processName: opt.processName || [],
+    processNameRegex: opt.processNameRegex || [],
     outbound: opt.outbound || "",
-    groupName: opt.groupName || "强制代理",
+    groupName: opt.groupName || "Grok Bot",
     rejectQuic: !!opt.rejectQuic,
     enableSniffer: opt.enableSniffer !== false,
     allowDirectFallback: !!opt.allowDirectFallback,
@@ -217,6 +220,8 @@ function ruleKey(rule) {
 }
 
 function buildForceRules(opt, groupName) {
+  opt = mergeOpt(opt);
+  groupName = groupName || opt.groupName;
   var rules = [];
   var i;
   if (opt.rejectQuic) {
@@ -246,6 +251,9 @@ function buildForceRules(opt, groupName) {
   }
   for (i = 0; i < opt.processName.length; i++) {
     rules.push("PROCESS-NAME," + opt.processName[i] + "," + groupName);
+  }
+  for (i = 0; i < opt.processNameRegex.length; i++) {
+    rules.push("PROCESS-NAME-REGEX," + opt.processNameRegex[i] + "," + groupName);
   }
   return rules;
 }
@@ -288,7 +296,7 @@ function applyForceProxy(config, profileName, opt) {
   var forceRules = buildForceRules(opt, opt.groupName);
   config.rules = forceRules.concat(stripConflicting(config.rules || [], forceRules));
 
-  if (opt.processName.length) {
+  if (opt.processName.length || opt.processNameRegex.length) {
     var mode = config["find-process-mode"];
     if (!mode || String(mode).toLowerCase() === "off") {
       config["find-process-mode"] = "strict";

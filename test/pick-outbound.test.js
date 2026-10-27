@@ -178,6 +178,7 @@ describe("applyForceProxy", () => {
   it("prepends rules that point at 强制代理, not 漏网之鱼", () => {
     const config = applyForceProxy(baseConfig(), "airport-a", {
       domainSuffix: ["github.com", "openai.com"],
+      groupName: "强制代理",
     });
     assert.equal(config.rules[0], "DOMAIN-SUFFIX,github.com,强制代理");
     assert.equal(config.rules[1], "DOMAIN-SUFFIX,openai.com,强制代理");
@@ -200,6 +201,7 @@ describe("applyForceProxy", () => {
     const config = applyForceProxy(baseConfig(), "", {
       domainSuffix: ["openai.com"],
       rejectQuic: true,
+      groupName: "强制代理",
     });
     assert.match(config.rules[0], /^AND,\(\(DOMAIN-SUFFIX,openai.com\)/);
     assert.equal(config.rules[1], "DOMAIN-SUFFIX,openai.com,强制代理");
@@ -210,10 +212,24 @@ describe("applyForceProxy", () => {
       domainSuffix: ["github.com"],
       processName: ["Telegram"],
       enableSniffer: true,
+      groupName: "强制代理",
     });
     assert.equal(config.sniffer.enable, true);
     assert.equal(config["find-process-mode"], "strict");
     assert.ok(config.rules.indexOf("PROCESS-NAME,Telegram,强制代理") >= 0);
+  });
+
+  it("defaults to Grok Bot process + grok.com / x.ai", () => {
+    const { CONFIG, main } = require("../force-proxy.js");
+    const config = main(baseConfig(), "stash");
+    assert.equal(CONFIG.groupName, "Grok Bot");
+    assert.ok(CONFIG.processName.indexOf("Grok Bot") >= 0);
+    assert.ok(config.rules.some((r) => r.indexOf("PROCESS-NAME,Grok Bot,Grok Bot") === 0));
+    assert.ok(config.rules.indexOf("PROCESS-NAME-REGEX,(?i)Grok Bot,Grok Bot") >= 0);
+    assert.ok(config.rules.indexOf("DOMAIN-SUFFIX,grok.com,Grok Bot") >= 0);
+    assert.ok(config.rules.indexOf("DOMAIN-SUFFIX,x.ai,Grok Bot") >= 0);
+    assert.equal(config["proxy-groups"][0].name, "Grok Bot");
+    assert.equal(config["find-process-mode"], "strict");
   });
 
   it("is a no-op when CONFIG has no targets", () => {

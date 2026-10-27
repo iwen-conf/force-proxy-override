@@ -33,7 +33,7 @@ https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/stash/force-prox
 https://link.stash.ws/install-override/cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/stash/force-proxy.stoverride
 ```
 
-默认强制：`github.com`、`githubusercontent.com`、`githubassets.com`、`openai.com`、`chatgpt.com`。导入后改域名列表即可。
+默认强制 **Grok Bot**：进程 `Grok Bot`（含 Helper），以及 `grok.com` / `grokusercontent.com` / `grokipedia.com` / `x.ai` / `spacex.ai`。其它流量仍按原规则分流。
 
 ## 要过两道关
 
@@ -59,15 +59,16 @@ JS 覆写管路由关，并且会自动挑出口组。入口关要在客户端�
 
 然后会：
 
-- 建一个策略组 `强制代理`，默认选中刚挑到的出口
-- 把域名规则插到规则表最前面
+- 建一个策略组 `Grok Bot`，默认选中刚挑到的出口
+- 把 Grok Bot 进程规则和 grok.com / x.ai 域名规则插到规则表最前面
 - 删掉同域名的旧规则，避免被「国内直连」抢走
 - 打开域名嗅探（应用直连 IP 时仍能按域名匹配）
+- 打开进程匹配（`find-process-mode: strict`），并屏蔽这些域名的 QUIC
 
 ### Clash Party / Mihomo Party / Sparkle
 
 1. 覆写 → 右上角 ＋ → 用上面的 JS 链接导入。
-2. 打开脚本，改顶部 `CONFIG.domainSuffix`（要强制的域名）。
+2. 默认已经是 Grok Bot。要加域名就改顶部 `CONFIG`。
 3. 订阅管理 → 该订阅 → 编辑信息 → 覆写里勾上这份脚本。多个订阅都勾上。
 4. 保存后按提示重启内核。
 
@@ -83,11 +84,10 @@ JS 覆写管路由关，并且会自动挑出口组。入口关要在客户端�
 打开脚本最上面的 `CONFIG`：
 
 ```javascript
-domainSuffix: ["github.com", "openai.com"], // 后缀，含子域
-domainKeyword: [],                         // 关键字
-domain: [],                                // 精确域名
-processName: [],                           // 进程名或包名
-outbound: "",                              // 留空自动挑；也可写死组名
+domainSuffix: ["grok.com", "x.ai"], // 后缀，含子域
+processName: ["Grok Bot"],          // macOS 进程名
+processNameRegex: ["(?i)Grok Bot"],
+outbound: "",                       // 留空自动挑；也可写死组名
 rejectQuic: false,                         // true = 这些域名的 UDP/443 改走 TCP
 enableSniffer: true,
 allowDirectFallback: false,                // true = 强制代理组末尾加 DIRECT

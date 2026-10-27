@@ -1,16 +1,22 @@
-# Clash Verge Rev Merge（YAML 合并）
-# 不会自动挑出口组。推荐把 force-proxy.js 贴进「全局扩展脚本」。
-# 若坚持用 Merge：确认「强制代理」组的第一项不是 DIRECT。
+# Clash Verge Rev Merge — Grok Bot 强制走代理
+# 推荐把 force-proxy.js 贴进「全局扩展脚本」。
+
+find-process-mode: strict
 
 prepend-proxy-groups:
-  - name: 强制代理
+  - name: Grok Bot
     type: select
     include-all: true
     exclude-filter: "(?i)直连|漏网|兜底|拦截|广告|DIRECT|REJECT|Traffic|Expire|流量|到期"
 
 prepend-rules:
-  - DOMAIN-SUFFIX,github.com,强制代理
-  - DOMAIN-SUFFIX,githubusercontent.com,强制代理
-  - DOMAIN-SUFFIX,githubassets.com,强制代理
-  - DOMAIN-SUFFIX,openai.com,强制代理
-  - DOMAIN-SUFFIX,chatgpt.com,强制代理
+  - AND,((DOMAIN-SUFFIX,grok.com),(NETWORK,udp),(DST-PORT,443)),REJECT
+  - AND,((DOMAIN-SUFFIX,x.ai),(NETWORK,udp),(DST-PORT,443)),REJECT
+  - PROCESS-NAME-REGEX,(?i)Grok Bot,Grok Bot
+  - PROCESS-NAME,Grok Bot,Grok Bot
+  - PROCESS-NAME,Grok Bot Helper,Grok Bot
+  - DOMAIN-SUFFIX,grok.com,Grok Bot
+  - DOMAIN-SUFFIX,grokusercontent.com,Grok Bot
+  - DOMAIN-SUFFIX,grokipedia.com,Grok Bot
+  - DOMAIN-SUFFIX,x.ai,Grok Bot
+  - DOMAIN-SUFFIX,spacex.ai,Grok Bot
