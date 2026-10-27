@@ -6,20 +6,31 @@
 
 ## 下载
 
+导入地址一律用 jsDelivr。GitHub raw（`raw.githubusercontent.com`）在国内经常下不下来，Stash 会报「下载文件失败」。
+
 | 客户端 | 导入地址 |
 |---|---|
-| Clash Verge Rev / Clash Party / Mihomo Party / Sparkle（推荐） | https://raw.githubusercontent.com/iwen-conf/force-proxy-override/main/force-proxy.js |
-| Clash Party YAML | https://raw.githubusercontent.com/iwen-conf/force-proxy-override/main/clash-party.yaml |
-| Clash Verge Rev Merge | https://raw.githubusercontent.com/iwen-conf/force-proxy-override/main/clash-verge.yaml |
-| Stash | https://raw.githubusercontent.com/iwen-conf/force-proxy-override/main/stash/force-proxy.stoverride |
-| Stash 一键安装 | https://link.stash.ws/install-override/raw.githubusercontent.com/iwen-conf/force-proxy-override/main/stash/force-proxy.stoverride |
-| Surge 模块 | https://raw.githubusercontent.com/iwen-conf/force-proxy-override/main/surge/force-proxy.sgmodule |
-| Quantumult X | https://raw.githubusercontent.com/iwen-conf/force-proxy-override/main/quantumultx/force-proxy.conf |
+| Clash Verge Rev / Clash Party / Mihomo Party / Sparkle（推荐） | https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/force-proxy.js |
+| Clash Party YAML | https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/clash-party.yaml |
+| Clash Verge Rev Merge | https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/clash-verge.yaml |
+| Stash 远程覆写（粘到 App 里） | https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/stash/force-proxy.stoverride |
+| Surge 模块 | https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/surge/force-proxy.sgmodule |
+| Quantumult X | https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/quantumultx/force-proxy.conf |
 
-GitHub raw 打不开时用 jsDelivr：
+### Stash
+
+在 Stash 里：**覆写 → ＋ → 远程**，URL 只填下面这一条文件地址：
 
 ```
-https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/force-proxy.js
+https://cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/stash/force-proxy.stoverride
+```
+
+不要把 `link.stash.ws/...` 填进这个框。那个是给浏览器打开、唤起 Stash 用的，填进去 Stash 拿到的不是 YAML，就会「下载文件失败」。
+
+浏览器一键唤起（Safari / Edge 打开）：
+
+```
+https://link.stash.ws/install-override/cdn.jsdelivr.net/gh/iwen-conf/force-proxy-override@main/stash/force-proxy.stoverride
 ```
 
 默认强制：`github.com`、`githubusercontent.com`、`githubassets.com`、`openai.com`、`chatgpt.com`。导入后改域名列表即可。
