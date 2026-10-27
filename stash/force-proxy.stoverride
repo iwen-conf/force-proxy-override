@@ -1,0 +1,31 @@
+name: 强制走代理
+desc: |-
+  指定域名强制走真实出口，不开全局。
+  默认覆盖 GitHub / OpenAI。按需改 rules 里的域名。
+  策略组「强制代理」用 include-all 拉全部节点；第一项会成为默认出口。
+  若客户端不支持 include-all，把 proxies 改成你订阅里的组名。
+author: iwen-conf
+homepage: https://github.com/iwen-conf/force-proxy-override
+category: 分流
+
+proxy-groups:
+  - name: 强制代理
+    type: select
+    include-all: true
+    exclude-filter: "(?i)直连|漏网|兜底|拦截|广告|DIRECT|REJECT|Traffic|Expire|流量|到期"
+
+sniffer:
+  enable: true
+  parse-pure-ip: true
+  sniff:
+    TLS:
+      ports: [443, 8443]
+    HTTP:
+      ports: [80, "8080-8880"]
+
+rules:
+  - DOMAIN-SUFFIX,github.com,强制代理
+  - DOMAIN-SUFFIX,githubusercontent.com,强制代理
+  - DOMAIN-SUFFIX,githubassets.com,强制代理
+  - DOMAIN-SUFFIX,openai.com,强制代理
+  - DOMAIN-SUFFIX,chatgpt.com,强制代理

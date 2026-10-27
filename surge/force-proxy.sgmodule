@@ -1,0 +1,11 @@
+#!name=强制走代理
+#!desc=指定域名强制走 PROXY，不开全局。按需改 [Rule] 里的域名。PROXY 必须是你配置里真实出国的策略，不能是 DIRECT。
+#!category=分流
+#!homepage=https://github.com/iwen-conf/force-proxy-override
+
+[Rule]
+DOMAIN-SUFFIX,github.com,PROXY
+DOMAIN-SUFFIX,githubusercontent.com,PROXY
+DOMAIN-SUFFIX,githubassets.com,PROXY
+DOMAIN-SUFFIX,openai.com,PROXY
+DOMAIN-SUFFIX,chatgpt.com,PROXY

@@ -1,0 +1,16 @@
+# Clash Verge Rev Merge（YAML 合并）
+# 不会自动挑出口组。推荐把 force-proxy.js 贴进「全局扩展脚本」。
+# 若坚持用 Merge：确认「强制代理」组的第一项不是 DIRECT。
+
+prepend-proxy-groups:
+  - name: 强制代理
+    type: select
+    include-all: true
+    exclude-filter: "(?i)直连|漏网|兜底|拦截|广告|DIRECT|REJECT|Traffic|Expire|流量|到期"
+
+prepend-rules:
+  - DOMAIN-SUFFIX,github.com,强制代理
+  - DOMAIN-SUFFIX,githubusercontent.com,强制代理
+  - DOMAIN-SUFFIX,githubassets.com,强制代理
+  - DOMAIN-SUFFIX,openai.com,强制代理
+  - DOMAIN-SUFFIX,chatgpt.com,强制代理
